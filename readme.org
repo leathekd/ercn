@@ -72,6 +72,12 @@ The supported categories are:
         (keyword . all)
         (pal . ("#emacs"))
         (query-buffer . all)))
+
+(defun do-notify (nickname message)
+  ;; notification code goes here
+  )
+
+(add-hook 'ercn-notify 'do-notify)
 #+END_EXAMPLE
 
 In this example, the =ercn-notify= hook will be called whenever anyone
@@ -83,6 +89,12 @@ a pal speaks in #emacs.
 #+BEGIN_EXAMPLE
 (setq ercn-notify-rules '((message . all))
       ercn-suppress-rules nil)
+
+(defun do-notify (nickname message)
+  ;; notification code goes here
+  )
+
+(add-hook 'ercn-notify 'do-notify)
 #+END_EXAMPLE
 
 I wouldn't recommend it, but it's your setup.
