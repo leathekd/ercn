@@ -85,51 +85,52 @@
 (defun ercn-match ()
   "Extracts information from the buffer and fires the ercn-notify hook
   if needed."
-  (goto-char (point-min))
-  (let* ((vector (erc-get-parsed-vector (point-min)))
-         (nickuserhost (erc-get-parsed-vector-nick vector))
-         (nickname (and nickuserhost
-                        (nth 0 (erc-parse-user nickuserhost))))
-         (nick-beg (and nickname
-                        (re-search-forward (regexp-quote nickname)
-                                           (point-max) t)
-                        (match-beginning 0)))
-         (nick-end (if nick-beg
-                       (progn (goto-char (match-end 0))
-                              (search-forward " " nil t 1)
-                              (point))
-                     (point-min)))
-         (message (replace-regexp-in-string
-                   "\n" " " (buffer-substring nick-end (point-max))))
-         (categories
-          (remove nil
-                  (list 'message
-                        (when (null nickname) 'system)
-                        (when (erc-query-buffer-p) 'query-buffer)
-                        (when (or (erc-match-fool-p nickuserhost message)
-                                  (erc-match-directed-at-fool-p message)) 'fool)
-                        (when (erc-match-dangerous-host-p nickuserhost message)
-                          'dangerous-host)
-                        (when (erc-match-current-nick-p nickuserhost message)
-                          'current-nick)
-                        (when (erc-match-keyword-p nickuserhost message)
-                          'keyword)
-                        (when (erc-match-pal-p nickuserhost message) 'pal))))
-         (notify-passes
-          (remove nil
-                  (mapcar
-                   (apply-partially 'ercn-rule-passes-p
-                                    ercn-notify-rules nickname message)
-                   categories)))
-         (suppress-passes
-          (remove nil
-                  (mapcar
-                   (apply-partially 'ercn-rule-passes-p
-                                    ercn-suppress-rules nickname message)
-                   categories))))
-    (when (and notify-passes
-               (null suppress-passes))
-      (run-hook-with-args 'ercn-notify nickname message))))
+  (save-excursion
+    (goto-char (point-min))
+    (let* ((vector (erc-get-parsed-vector (point-min)))
+           (nickuserhost (erc-get-parsed-vector-nick vector))
+           (nickname (and nickuserhost
+                          (nth 0 (erc-parse-user nickuserhost))))
+           (nick-beg (and nickname
+                          (re-search-forward (regexp-quote nickname)
+                                             (point-max) t)
+                          (match-beginning 0)))
+           (nick-end (if nick-beg
+                         (progn (goto-char (match-end 0))
+                                (search-forward " " nil t 1)
+                                (point))
+                       (point-min)))
+           (message (replace-regexp-in-string
+                     "\n" " " (buffer-substring nick-end (point-max))))
+           (categories
+            (remove nil
+                    (list 'message
+                          (when (null nickname) 'system)
+                          (when (erc-query-buffer-p) 'query-buffer)
+                          (when (or (erc-match-fool-p nickuserhost message)
+                                    (erc-match-directed-at-fool-p message)) 'fool)
+                          (when (erc-match-dangerous-host-p nickuserhost message)
+                            'dangerous-host)
+                          (when (erc-match-current-nick-p nickuserhost message)
+                            'current-nick)
+                          (when (erc-match-keyword-p nickuserhost message)
+                            'keyword)
+                          (when (erc-match-pal-p nickuserhost message) 'pal))))
+           (notify-passes
+            (remove nil
+                    (mapcar
+                     (apply-partially 'ercn-rule-passes-p
+                                      ercn-notify-rules nickname message)
+                     categories)))
+           (suppress-passes
+            (remove nil
+                    (mapcar
+                     (apply-partially 'ercn-rule-passes-p
+                                      ercn-suppress-rules nickname message)
+                     categories))))
+      (when (and notify-passes
+                 (null suppress-passes))
+        (run-hook-with-args 'ercn-notify nickname message)))))
 
 (defun ercn-fix-hook-order (&rest _)
   "Notify before timestamps are added"
