@@ -134,6 +134,7 @@
                  (null suppress-passes))
         (run-hook-with-args 'ercn-notify nickname message)))))
 
+;;;###autoload
 (defun ercn-fix-hook-order (&rest _)
   "Notify before timestamps are added"
   (when (member 'erc-add-timestamp erc-insert-modify-hook)
@@ -151,9 +152,6 @@
   ((remove-hook 'erc-insert-modify-hook 'ercn-match)
    (remove-hook 'erc-connect-pre-hook 'ercn-fix-hook-order)))
 
-;;;###autoload
-(eval-after-load 'erc '(add-to-list 'erc-modules 'ercn t))
-
 ;; For first time use
 ;;;###autoload
 (when (and (boundp 'erc-modules)
@@ -161,4 +159,11 @@
   (add-to-list 'erc-modules 'ercn))
 
 (provide 'ercn)
+
+;;;###autoload
+(eval-after-load 'erc
+  '(progn
+     (unless (featurep 'ercn (require 'ercn)))
+     (add-to-list 'erc-modules 'ercn t)))
+
 ;;; ercn.el ends here
