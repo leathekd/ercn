@@ -121,13 +121,13 @@
                             'keyword)
                           (when (erc-match-pal-p nickuserhost message) 'pal))))
            (notify-passes
-            (remove nil
+            (delq nil
                     (mapcar
                      (apply-partially 'ercn-rule-passes-p
                                       ercn-notify-rules nickname message)
                      categories)))
            (suppress-passes
-            (remove nil
+            (delq nil
                     (mapcar
                      (apply-partially 'ercn-rule-passes-p
                                       ercn-suppress-rules nickname message)
