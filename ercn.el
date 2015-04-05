@@ -285,7 +285,7 @@ Each hook function must accept two arguments: NICKNAME and MESSAGE."
     (add-hook 'erc-insert-modify-hook 'erc-add-timestamp t)))
 
 (defvar ercn--pre-existing-erc-match-flag nil
-    "Indicate whether `erc-insert-modify-hook' contained `erc-match' on entry.")
+  "Indicate whether `erc-insert-modify-hook' contained `erc-match' on entry.")
 
 (define-erc-module ercn nil
   "Flexible erc notifications"
