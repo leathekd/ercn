@@ -223,8 +223,8 @@ Each hook function must accept two arguments: NICKNAME and MESSAGE."
     (when notify-rule
       (cond
        ((eq 'all notify-rule) t)
-       ((listp notify-rule) (member (buffer-name) notify-rule))
-       ((functionp notify-rule) (funcall notify-rule nick message))))))
+       ((functionp notify-rule) (funcall notify-rule nick message))
+       ((listp notify-rule) (member (buffer-name) notify-rule))))))
 
 ;;;###autoload
 (defun ercn-match ()
