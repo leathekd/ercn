@@ -144,6 +144,7 @@
 ;;; Code:
 (require 'erc)
 (require 'erc-match)
+(require 'dash)
 
 (defconst ercn-categories
   '(message
@@ -261,17 +262,15 @@ Each hook function must accept two arguments: NICKNAME and MESSAGE."
                             'keyword)
                           (when (erc-match-pal-p nickuserhost message) 'pal))))
            (notify-passes
-            (delq nil
-                    (mapcar
-                     (apply-partially 'ercn-rule-passes-p
-                                      ercn-notify-rules nickname message)
-                     categories)))
+            (-keep
+              (-partial #'ercn-rule-passes-p
+                ercn-notify-rules nickname message)
+              categories))
            (suppress-passes
-            (delq nil
-                    (mapcar
-                     (apply-partially 'ercn-rule-passes-p
-                                      ercn-suppress-rules nickname message)
-                     categories))))
+            (-keep
+              (-partial #'ercn-rule-passes-p
+                ercn-suppress-rules nickname message)
+              categories)))
       (when (and notify-passes
                  (null suppress-passes))
         (run-hook-with-args 'ercn-notify-hook nickname message)))))
@@ -279,7 +278,7 @@ Each hook function must accept two arguments: NICKNAME and MESSAGE."
 ;;;###autoload
 (defun ercn-fix-hook-order (&rest _)
   "Notify before timestamps are added"
-  (when (member 'erc-add-timestamp erc-insert-modify-hook)
+  (when (memq 'erc-add-timestamp erc-insert-modify-hook)
     (remove-hook 'erc-insert-modify-hook 'erc-add-timestamp)
     (remove-hook 'erc-insert-modify-hook 'ercn-match)
     (add-hook 'erc-insert-modify-hook 'ercn-match 'append)
