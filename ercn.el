@@ -286,14 +286,21 @@ Each hook function must accept two arguments: NICKNAME and MESSAGE."
     (add-hook 'erc-insert-modify-hook 'ercn-match 'append)
     (add-hook 'erc-insert-modify-hook 'erc-add-timestamp t)))
 
+(defvar ercn--pre-existing-erc-match-flag nil
+    "Indicate whether `erc-insert-modify-hook' contained `erc-match' on entry.")
+
 (define-erc-module ercn nil
   "Flexible erc notifications"
   ((add-hook 'erc-insert-modify-hook 'ercn-match 'append)
    ;; to avoid duplicate messages, remove the erc-match hook
+   (setq ercn--pre-existing-erc-match-flag
+     (memq 'erc-match erc-insert-modify-hook))
    (remove-hook 'erc-insert-modify-hook 'erc-match)
    (add-hook 'erc-connect-pre-hook 'ercn-fix-hook-order t))
   ((remove-hook 'erc-insert-modify-hook 'ercn-match)
-   (remove-hook 'erc-connect-pre-hook 'ercn-fix-hook-order)))
+   (remove-hook 'erc-connect-pre-hook 'ercn-fix-hook-order)
+   (when ercn--pre-existing-erc-match-flag
+     (add-hook 'erc-insert-modify-hook #'erc-match))))
 
 ;; For first time use
 ;;;###autoload
