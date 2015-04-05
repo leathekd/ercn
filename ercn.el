@@ -4,7 +4,7 @@
 
 ;; Author: David Leatherman <leathekd@gmail.com>
 ;; URL: http://www.github.com/leathekd/ercn
-;; Version: 1.0.2
+;; Version: 1.1
 
 ;; This file is not part of GNU Emacs.
 
@@ -17,7 +17,7 @@
 ;; documentation for `ercn-notify-rules' and `ercn-suppress-rules' to
 ;; set it up.
 ;;
-;; When a notificaiton is needed, ercn calls the ercn-notify hook so
+;; When a notificaiton is needed, ercn calls the ercn-notify-hook hook so
 ;; that any notification mechanism available for your system can be
 ;; utilized with a little elisp.
 ;;
@@ -55,7 +55,7 @@
 ;; Configuration
 ;; =============
 ;;
-;; Two variables control whether or not ercn calls the ercn-notify hook:
+;; Two variables control whether or not ercn calls the ercn-notify-hook hook:
 ;;
 ;; * ercn-notify-rules: Rules to determine if the hook should be called. It
 ;;   defaults to calling the hook whenever a pal speaks, a keyword is mentioned,
@@ -95,7 +95,7 @@
 ;;
 ;;   (add-hook 'ercn-notify 'do-notify)
 ;;
-;; In this example, the ercn-notify hook will be called whenever anyone mentions
+;; In this example, the ercn-notify-hook hook will be called whenever anyone mentions
 ;; my nick or a keyword or when sent from a query buffer, or if a pal speaks in
 ;; #emacs.
 ;;
@@ -109,7 +109,7 @@
 ;;       ;; notification code goes here
 ;;   )
 ;;
-;;   (add-hook 'ercn-notify 'do-notify)
+;;   (add-hook 'ercn-notify-hook 'do-notify)
 ;;
 ;; I wouldn’t recommend it, but it’s your setup.
 
@@ -121,6 +121,8 @@
 ;; 1.0.1 - save-excursion, to avoid messing with the current line
 
 ;; 1.0.2 - fix autoloads
+
+;; 1.1 - Added customize options; renamed `erc-notify' `erc-notify-hook'
 
 ;;; License:
 
@@ -143,31 +145,77 @@
 (require 'erc)
 (require 'erc-match)
 
-(defvar ercn-notify-rules
+(defconst ercn-categories
+  '(message
+    current-nick
+    keyword
+    pal
+    query-buffer
+    fool
+    dangerous-host
+    system)
+  "Notification categories."
+)
+
+(defgroup ercn nil "Flexible notifications for ERC." :group 'erc)
+
+(defcustom ercn-notify-rules
   '((current-nick . all)
     (keyword . all)
     (pal . all)
     (query-buffer . all))
   "An alist containing the rules for when to notify. The format is the
-  category followed by either the special symbol 'all, a list of
-  buffer names in which to notify, or a function predicate. The
-  predicate will be called with two strings, the nickname of the
-  sender and the message. If it returns truthy, the notification hook
-  will be called (unless it is suppressed).")
+category followed by either the special symbol 'all, a list of
+buffer names in which to notify, or a function predicate. The
+predicate will be called with two strings, the nickname of the
+sender and the message. If it returns truthy, the notification hook
+will be called (unless it is suppressed)."
+  :tag "ercn notify rules"
+  :group 'ercn
+  :type
+  '(alist :key-type symbol
+     :value-type (choice
+                   (const :tag "All" all)
+                   (repeat :tag "List of buffer names"
+                     (string :tag "Buffer name"))
+                   (function :tag "Predicate")))
+  :options ercn-categories
+)
 
-(defvar ercn-suppress-rules
+(defcustom ercn-suppress-rules
   '((dangerous-host . all)
     (fool . all)
     (system . all))
   "An alist containing the rules for when to suppress notification.
-  Suppression takes precedent over notification, so if any suppression
-  rule matches, the notification hook will not be called.
+Suppression takes precedent over notification, so if any suppression
+rule matches, the notification hook will not be called.
 
-  The format is the category followed by either the special symbol
-  'all (to suppress everywhere), a list of buffer names in which to
-  suppress, or a function predicate. The predicate will be called with
-  two strings, the nickname of the sender and the message. If it
-  returns truthy, the notification will be suppressed.")
+The format is the category followed by either the special symbol
+'all (to suppress everywhere), a list of buffer names in which to
+suppress, or a function predicate. The predicate will be called with
+two strings, the nickname of the sender and the message. If it
+returns truthy, the notification will be suppressed."
+  :tag "ercn suppress rules"
+  :group 'ercn
+  :type
+  '(alist :key-type symbol
+     :value-type (choice
+                   (const :tag "All" all)
+                   (repeat :tag "List of buffer names"
+                     (string :tag "Buffer name"))
+                   (function :tag "Predicate")))
+  :options ercn-categories
+)
+
+(defcustom ercn-notify-hook nil
+  "Functions run when an ERC message rates notification.
+
+Each hook function must accept two arguments: NICKNAME and MESSAGE."
+  :tag "ercn notify hook"
+  :group 'ercn
+  :type '(repeat function)
+)
+(define-obsolete-variable-alias ercn-notify ercn-notify-hook "1.1")
 
 (defun ercn-rule-passes-p (rules nick message category)
   "Checks the rules and returns truthy if the notify hook should be called."
@@ -180,7 +228,7 @@
 
 ;;;###autoload
 (defun ercn-match ()
-  "Extracts information from the buffer and fires the ercn-notify hook
+  "Extracts information from the buffer and fires the ercn-notify-hook hook
   if needed."
   (save-excursion
     (goto-char (point-min))
@@ -227,7 +275,7 @@
                      categories))))
       (when (and notify-passes
                  (null suppress-passes))
-        (run-hook-with-args 'ercn-notify nickname message)))))
+        (run-hook-with-args 'ercn-notify-hook nickname message)))))
 
 ;;;###autoload
 (defun ercn-fix-hook-order (&rest _)
