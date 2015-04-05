@@ -107,7 +107,7 @@
            (message (replace-regexp-in-string
                      "\n" " " (buffer-substring nick-end (point-max))))
            (categories
-            (remove nil
+            (delq nil
                     (list 'message
                           (when (null nickname) 'system)
                           (when (erc-query-buffer-p) 'query-buffer)
