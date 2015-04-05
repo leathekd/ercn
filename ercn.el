@@ -297,8 +297,7 @@ Each hook function must accept two arguments: NICKNAME and MESSAGE."
 
 ;; For first time use
 ;;;###autoload
-(when (and (boundp 'erc-modules)
-           (not (member 'ercn 'erc-modules)))
+(when (boundp 'erc-modules)
   (add-to-list 'erc-modules 'ercn))
 
 (provide 'ercn)
