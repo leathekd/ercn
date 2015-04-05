@@ -17,7 +17,7 @@
 ;; documentation for `ercn-notify-rules' and `ercn-suppress-rules' to
 ;; set it up.
 ;;
-;; When a notificaiton is needed, ercn calls the ercn-notify-hook hook so
+;; When a notificaiton is needed, ercn calls the `ercn-notify-hook' hook so
 ;; that any notification mechanism available for your system can be
 ;; utilized with a little elisp.
 ;;
@@ -57,11 +57,11 @@
 ;;
 ;; Two variables control whether or not ercn calls the ercn-notify-hook hook:
 ;;
-;; * ercn-notify-rules: Rules to determine if the hook should be called. It
+;; * `ercn-notify-rules': Rules to determine if the hook should be called. It
 ;;   defaults to calling the hook whenever a pal speaks, a keyword is mentioned,
 ;;   your current-nick is mentioned, or a message is sent inside a query buffer.
 ;;
-;; * ercn-suppress-rules: Rules to determine if the notification should be
+;; * `ercn-suppress-rules': Rules to determine if the notification should be
 ;;   suppressed. Takes precedent over ercn-notify-rules. The default will
 ;;   suppress messages from fools, dangerous-hosts, and system messages.
 ;;
@@ -95,9 +95,9 @@
 ;;
 ;;   (add-hook 'ercn-notify 'do-notify)
 ;;
-;; In this example, the ercn-notify-hook hook will be called whenever anyone mentions
-;; my nick or a keyword or when sent from a query buffer, or if a pal speaks in
-;; #emacs.
+;; In this example, the `ercn-notify-hook' hook will be called whenever anyone
+;; mentions my nick or a keyword or when sent from a query buffer, or if a pal
+;; speaks in #emacs.
 ;;
 ;; To call the hook on all messages
 ;; --------------------------------
@@ -168,7 +168,7 @@
 category followed by either the special symbol 'all, a list of
 buffer names in which to notify, or a function predicate. The
 predicate will be called with two strings, the nickname of the
-sender and the message. If it returns truthy, the notification hook
+sender and the message. If it returns truthy, `ercn-notify-hook'
 will be called (unless it is suppressed)."
   :tag "ercn notify rules"
   :group 'ercn
@@ -218,7 +218,7 @@ Each hook function must accept two arguments: NICKNAME and MESSAGE."
 (define-obsolete-variable-alias ercn-notify ercn-notify-hook "1.1")
 
 (defun ercn-rule-passes-p (rules nick message category)
-  "Checks the rules and returns truthy if the notify hook should be called."
+  "Checks the rules and returns truthy if `ercn-notify-hook' should be called."
   (let ((notify-rule (cdr (assoc category rules))))
     (when notify-rule
       (cond
@@ -228,8 +228,7 @@ Each hook function must accept two arguments: NICKNAME and MESSAGE."
 
 ;;;###autoload
 (defun ercn-match ()
-  "Extracts information from the buffer and fires the ercn-notify-hook hook
-  if needed."
+  "Extracts information from the buffer and fires `ercn-notify-hook' if needed."
   (save-excursion
     (goto-char (point-min))
     (let* ((vector (erc-get-parsed-vector (point-min)))
