@@ -17,7 +17,7 @@
 ;; documentation for `ercn-notify-rules' and `ercn-suppress-rules' to
 ;; set it up.
 ;;
-;; When a notificaiton is needed, ercn calls the `ercn-notify-hook' hook so
+;; When a notification is needed, ercn calls the `ercn-notify-hook' hook so
 ;; that any notification mechanism available for your system can be
 ;; utilized with a little elisp.
 ;;
