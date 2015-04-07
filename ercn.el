@@ -155,8 +155,7 @@
     fool
     dangerous-host
     system)
-  "Notification categories."
-)
+  "Notification categories.")
 
 (defgroup ercn nil "Flexible notifications for ERC." :group 'erc)
 
@@ -180,8 +179,7 @@ will be called (unless it is suppressed)."
                    (repeat :tag "List of buffer names"
                      (string :tag "Buffer name"))
                    (function :tag "Predicate")))
-  :options ercn-categories
-)
+  :options ercn-categories)
 
 (defcustom ercn-suppress-rules
   '((dangerous-host . all)
@@ -205,8 +203,7 @@ returns truthy, the notification will be suppressed."
                    (repeat :tag "List of buffer names"
                      (string :tag "Buffer name"))
                    (function :tag "Predicate")))
-  :options ercn-categories
-)
+  :options ercn-categories)
 
 (defcustom ercn-notify-hook nil
   "Functions run when an ERC message rates notification.
@@ -214,8 +211,7 @@ returns truthy, the notification will be suppressed."
 Each hook function must accept two arguments: NICKNAME and MESSAGE."
   :tag "ercn notify hook"
   :group 'ercn
-  :type '(repeat function)
-)
+  :type '(repeat function))
 (define-obsolete-variable-alias ercn-notify ercn-notify-hook "1.1")
 
 (defun ercn-rule-passes-p (rules nick message category)
