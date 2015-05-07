@@ -205,6 +205,7 @@ returns truthy, the notification will be suppressed."
                    (function :tag "Predicate")))
   :options ercn-categories)
 
+(define-obsolete-variable-alias 'ercn-notify 'ercn-notify-hook "1.1")
 (defcustom ercn-notify-hook nil
   "Functions run when an ERC message rates notification.
 
@@ -212,7 +213,6 @@ Each hook function must accept two arguments: NICKNAME and MESSAGE."
   :tag "ercn notify hook"
   :group 'ercn
   :type '(repeat function))
-(define-obsolete-variable-alias ercn-notify ercn-notify-hook "1.1")
 
 (defun ercn-rule-passes-p (rules nick message category)
   "Checks the rules and returns truthy if `ercn-notify-hook' should be called."
