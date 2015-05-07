@@ -4,7 +4,7 @@
 
 ;; Author: David Leatherman <leathekd@gmail.com>
 ;; URL: http://www.github.com/leathekd/ercn
-;; Version: 1.1
+;; Version: 1.1.1
 
 ;; This file is not part of GNU Emacs.
 
