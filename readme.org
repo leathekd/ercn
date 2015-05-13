@@ -9,11 +9,11 @@ at this point so I decided to publish it anyway.
 
 ** Installation
 *** Via Marmalade (recommended)
-If you are on Emacs 23, go to marmalade-repo.org and follow the 
+If you are on Emacs 23, go to marmalade-repo.org and follow the
 installation instructions there.
 
-If you are on Emacs 24, add Marmalade as a package archive source 
-in ~/.emacs.d/init.el:
+If you are on Emacs 24, add Marmalade as a package archive source
+in =~/.emacs.d/init.el=:
 
 #+BEGIN_EXAMPLE
 (require 'package)
@@ -30,8 +30,8 @@ M-x package-install RET ercn RET
 #+END_EXAMPLE
 
 *** Manually (via git)
-Download the source or clone the repo and add the following 
-to ~/.emacs.d/init.el:
+Download the source or clone the repo and add the following
+to =~/.emacs.d/init.el=:
 
 #+BEGIN_EXAMPLE
 (add-to-list 'load-path "path/to/ercn")
@@ -39,19 +39,18 @@ to ~/.emacs.d/init.el:
 #+END_EXAMPLE
 
 ** Configuration
-Two variables control whether or not ercn calls the =ercn-notify=
-hook:
-- ercn-notify-rules: Rules to determine if the hook should be called.
+Two variables control whether or not ercn calls =ercn-notify-hook=:
+- =ercn-notify-rules=: Rules to determine if the hook should be called.
   It defaults to calling the hook whenever a pal speaks, a keyword is
   mentioned, your current-nick is mentioned, or a message is sent
   inside a query buffer.
-- ercn-suppress-rules: Rules to determine if the notification should
-  be suppressed. Takes precedent over ercn-notify-rules. The default
+- =ercn-suppress-rules=: Rules to determine if the notification should
+  be suppressed. Takes precedent over =ercn-notify-rules=. The default
   will suppress messages from fools, dangerous-hosts, and system
   messages.
 
 Both vars are alists that contain the category of message as the keys
-and as the value either the special symbol 'all, a list of buffer
+and as the value either the symbol '=all=, a list of buffer
 names in which to notify or suppress, or a function predicate.
 
 The supported categories are:
@@ -77,10 +76,10 @@ The supported categories are:
   ;; notification code goes here
   )
 
-(add-hook 'ercn-notify 'do-notify)
+(add-hook 'ercn-notify-hook 'do-notify)
 #+END_EXAMPLE
 
-In this example, the =ercn-notify= hook will be called whenever anyone
+In this example, =ercn-notify-hook= will be called whenever anyone
 mentions my nick or a keyword or when sent from a query buffer, or if
 a pal speaks in #emacs.
 
@@ -94,7 +93,7 @@ a pal speaks in #emacs.
   ;; notification code goes here
   )
 
-(add-hook 'ercn-notify 'do-notify)
+(add-hook 'ercn-notify-hook 'do-notify)
 #+END_EXAMPLE
 
 I wouldn't recommend it, but it's your setup.
