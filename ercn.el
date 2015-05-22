@@ -299,7 +299,7 @@ Each hook function must accept two arguments: NICKNAME and MESSAGE."
 ;; For first time use
 ;;;###autoload
 (when (boundp 'erc-modules)
-  (add-to-list 'erc-modules 'ercn))
+  (add-to-list 'erc-modules 'ercn 'appending))
 
 (provide 'ercn)
 
@@ -307,6 +307,6 @@ Each hook function must accept two arguments: NICKNAME and MESSAGE."
 (eval-after-load 'erc
   '(progn
      (unless (featurep 'ercn (require 'ercn)))
-     (add-to-list 'erc-modules 'ercn t)))
+     (add-to-list 'erc-modules 'ercn 'appending)))
 
 ;;; ercn.el ends here
