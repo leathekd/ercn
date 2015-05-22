@@ -296,10 +296,15 @@ Each hook function must accept two arguments: NICKNAME and MESSAGE."
    (when ercn--pre-existing-erc-match-message-flag
      (add-hook 'erc-insert-modify-hook #'erc-match-message))))
 
+(defun ercn--add-erc-module ()
+  "Add ercn to the end of `erc-modules' and update."
+  (add-to-list 'erc-modules 'ercn 'appending)
+  (erc-update-modules))
+
 ;; For first time use
 ;;;###autoload
 (when (boundp 'erc-modules)
-  (add-to-list 'erc-modules 'ercn 'appending))
+  (ercn--add-erc-module))
 
 (provide 'ercn)
 
@@ -307,6 +312,6 @@ Each hook function must accept two arguments: NICKNAME and MESSAGE."
 (eval-after-load 'erc
   '(progn
      (unless (featurep 'ercn (require 'ercn)))
-     (add-to-list 'erc-modules 'ercn 'appending)))
+     (ercn--add-erc-module)))
 
 ;;; ercn.el ends here
