@@ -311,7 +311,7 @@ Each hook function must accept two arguments: NICKNAME and MESSAGE."
 ;;;###autoload
 (eval-after-load 'erc
   '(progn
-     (unless (featurep 'ercn (require 'ercn)))
+     (require 'ercn)
      (ercn--add-erc-module)))
 
 ;;; ercn.el ends here
