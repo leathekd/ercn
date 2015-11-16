@@ -12,31 +12,31 @@ at this point so I decided to publish it anyway.
 If you are on Emacs 23, go to marmalade-repo.org and follow the
 installation instructions there.
 
-If you are on Emacs 24, add Marmalade as a package archive source
-in =~/.emacs.d/init.el=:
+On Emacs 24, add Melpa or Melpa Stable (I try to tag releases) as a
+package archive source in =~/.emacs.d/init.el=:
 
-#+BEGIN_EXAMPLE
+#+BEGIN_SRC elisp
 (require 'package)
 (add-to-list 'package-archives
-             '("marmalade" . "http://marmalade-repo.org/packages/") t)
+             '("melpa" . "https://melpa.org/packages/"))
 (package-initialize)
-#+END_EXAMPLE
+#+END_SRC
 
 Then you can install it:
 
-#+BEGIN_EXAMPLE
+#+BEGIN_SRC
 M-x package-refresh-contents
 M-x package-install RET ercn RET
-#+END_EXAMPLE
+#+END_SRC
 
 *** Manually (via git)
 Download the source or clone the repo and add the following
 to =~/.emacs.d/init.el=:
 
-#+BEGIN_EXAMPLE
+#+BEGIN_SRC elisp
 (add-to-list 'load-path "path/to/ercn")
 (require 'ercn)
-#+END_EXAMPLE
+#+END_SRC
 
 ** Configuration
 Two variables control whether or not ercn calls =ercn-notify-hook=:
@@ -50,7 +50,7 @@ Two variables control whether or not ercn calls =ercn-notify-hook=:
   messages.
 
 Both vars are alists that contain the category of message as the keys
-and as the value either the symbol '=all=, a list of buffer
+and as the value either the symbol =all=, a list of buffer
 names in which to notify or suppress, or a function predicate.
 
 The supported categories are:
@@ -65,19 +65,19 @@ The supported categories are:
 
 *** An example configuration
 
-#+BEGIN_EXAMPLE
-(setq ercn-notify-rules
-      '((current-nick . all)
-        (keyword . all)
-        (pal . ("#emacs"))
-        (query-buffer . all)))
+#+BEGIN_SRC elisp
+  (setq ercn-notify-rules
+        '((current-nick . all)
+          (keyword . all)
+          (pal . ("#emacs"))
+          (query-buffer . all)))
 
-(defun do-notify (nickname message)
-  ;; notification code goes here
-  )
+  (defun do-notify (nickname message)
+    ;; notification code goes here
+    )
 
-(add-hook 'ercn-notify-hook 'do-notify)
-#+END_EXAMPLE
+  (add-hook 'ercn-notify-hook 'do-notify)
+#+END_SRC
 
 In this example, =ercn-notify-hook= will be called whenever anyone
 mentions my nick or a keyword or when sent from a query buffer, or if
@@ -85,18 +85,40 @@ a pal speaks in #emacs.
 
 *** To call the hook on all messages
 
-#+BEGIN_EXAMPLE
-(setq ercn-notify-rules '((message . all))
-      ercn-suppress-rules nil)
+#+BEGIN_SRC elisp
+  (setq ercn-notify-rules '((message . all))
+        ercn-suppress-rules nil)
 
-(defun do-notify (nickname message)
-  ;; notification code goes here
-  )
+  (defun do-notify (nickname message)
+    ;; notification code goes here
+    )
 
-(add-hook 'ercn-notify-hook 'do-notify)
-#+END_EXAMPLE
+  (add-hook 'ercn-notify-hook 'do-notify)
+#+END_SRC
 
 I wouldn't recommend it, but it's your setup.
+
+*** An example notify hook function
+
+It's helpful to know what the state of the world is when the hook
+function is invoked.  The following is an example hook.  Note, for
+instance, that the current buffer for the hook function is actually
+the buffer for the channel where the IRC message was sent.
+
+#+BEGIN_SRC elisp
+  (defun do-notify (nickname message)
+    (let* ((channel (buffer-name))
+           ;; using https://github.com/leathekd/erc-hl-nicks
+           (nick (erc-hl-nicks-trim-irc-nick nickname))
+           (title (if (string-match-p (concat "^" nickname) channel)
+                      nick
+                    (concat nick " (" channel ")")))
+           ;; Using https://github.com/magnars/s.el
+           (msg (s-trim (s-collapse-whitespace message))))
+      ;; call the system notifier here
+      ))
+#+END_SRC
+
 
 ** License
 Source Copyright © 2012 David Leatherman. Distributed under the GNU
