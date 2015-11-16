@@ -8,10 +8,7 @@ already provides for this purpose, but I'm reasonably happy with ercn
 at this point so I decided to publish it anyway.
 
 ** Installation
-*** Via Marmalade (recommended)
-If you are on Emacs 23, go to marmalade-repo.org and follow the
-installation instructions there.
-
+*** Via Emacs Packages (recommended)
 On Emacs 24, add Melpa or Melpa Stable (I try to tag releases) as a
 package archive source in =~/.emacs.d/init.el=:
 
